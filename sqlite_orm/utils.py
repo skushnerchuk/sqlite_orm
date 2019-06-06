@@ -36,4 +36,4 @@ def prepare_value(val):
         return '"{}"'.format(val)
     elif not val:
         return 'NULL'
-    return '{}'.format(val)
+    return val

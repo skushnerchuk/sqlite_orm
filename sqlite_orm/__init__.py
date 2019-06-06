@@ -8,13 +8,14 @@ class BaseModel:
     """Основной класс модели данных"""
 
     __table_name__ = ''
+    query = None
 
     @class_property
     def table_name(cls):
         """Имя таблицы. Если не задано явно, создается из имени класса"""
         if cls.__table_name__:
             return cls.__table_name__
-        return cls.__name__.lower()
+        return cls.__name__.lower() + 's'
 
     @classmethod
     def get_column_names(cls):

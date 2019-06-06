@@ -25,35 +25,23 @@ class Product(BaseModel):
 
 Выборка:
 ```python
-products = Product.query.select().first()
-products = Product.query.select().filter('{}.name LIKE "%Brand%"'.format(Product.table_name)).all()
+product = Product.query.select(Product.id, Product.name, Category.name).filter(Product.id == 5).first()
+id = a(Product.id) # or a.get(Product.id)
+name = a(Product.name) # or a.get(Product.name)
+category_name = a(Category.name) # or a.get(Category.name)
+...
+products = Product.query.select().filter(Product.id == 5).or_(Product.id == 4).or_(Product.id == 3).all()
+for product in products:
+    id = product(Product.id) # or a.get(Product.id)
+    name = product(Product.name) # or a.get(Product.name)
+    category_name = product(Category.name) # or a.get(Category.name)
 ```
 
 Вставка и обновление
 ```python
-id = Category.query.insert(
-    {
-        Category.name: 'Новая категория'
-    }
-).exec().last_id
-
-Product.query.insert(
-    {
-        Product.name: 'New product',
-        Product.category: id
-    }
-).exec()
-
+id = Category.query.insert(name='Новая категория').execute().last_id
 db.commit()
-
-a = Product.query.select().first()
-
-if a:
-    id = a.get_value(Product.table_name, Product.id)
-    Product.query.update(
-        {
-            Product.name: 'Brand new product',
-        }
-    ).filter('id={}'.format(id)).exec()
-    db.commit()
+...
+Product.query.update(name='New name', category=1).filter(Product.id == product(Product.id)).execute()
+db.commit()
 ```

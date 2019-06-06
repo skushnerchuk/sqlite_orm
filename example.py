@@ -4,7 +4,6 @@ from sqlite_orm import BaseModel
 
 
 class Category(BaseModel):
-
     __table_name__ = 'categories'
 
     id = Column('INTEGER', primary_key=True, autoincrement=True)
@@ -12,7 +11,6 @@ class Category(BaseModel):
 
 
 class Product(BaseModel):
-
     __table_name__ = 'products'
 
     id = Column('INTEGER', primary_key=True, autoincrement=True)
@@ -21,7 +19,6 @@ class Product(BaseModel):
 
 
 db = SQLiteDataBase('data.db')
-db.connect()
 
 # В данной реализации важен порядок регистрации моделей
 # Если таблица имеет внешний ключ на другую, то та, на которую ссылаются,
@@ -29,29 +26,14 @@ db.connect()
 db.register_model(Category, True)
 db.register_model(Product, True)
 
-
-id = Category.query.insert(
-    {
-        Category.name: 'Новая категория'
-    }
-).exec().last_id
-
-Product.query.insert(
-    {
-        Product.name: 'New product',
-        Product.category: id
-    }
-).exec()
-
+id = Category.query.insert(name='Новая категория').execute().last_id
+Product.query.insert(name='New product', category=id).execute()
 db.commit()
 
-a = Product.query.select().first()
-
-if a:
-    id = a.get_value(Product.table_name, Product.id)
-    Product.query.update(
-        {
-            Product.name: 'Brand new product',
-        }
-    ).filter('id={}'.format(id)).exec()
-    db.commit()
+product = Product.query.select().first()
+print('id={}'.format(product(Product.id)))
+print('name={}'.format(product(Product.name)))
+print('category={}'.format(product(Category.name)))
+product = Product.query.select().first()
+Product.query.update(name='1234567890').filter(Product.id == product(Product.id)).execute()
+db.commit()

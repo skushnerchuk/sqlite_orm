@@ -13,9 +13,7 @@ class SQLiteDataBase:
         self.db = None
         self.cursor = None
         self.models = []
-
-    def connect(self):
-        """Подключение к базе данных. Если файл не существует - он будет создан"""
+        # Подключение к базе данных. Если файл не существует - он будет создан
         self.db = sqlite3.connect(self.db_name)
         self.cursor = self.db.cursor()
         # Включаем работу с внешними ключами, иначе ON DELETE/UPDATE не будут работать
@@ -27,6 +25,7 @@ class SQLiteDataBase:
             # Создаем свойство name для каждого столбца, равного имени его переменной
             if isinstance(value, Column):
                 value.name = key
+                value.model = model
 
         self.models.append(model)
         model.query = Query(self.cursor, model)
